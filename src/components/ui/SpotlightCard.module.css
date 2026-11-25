@@ -1,0 +1,49 @@
+/* * isolation: el brillo de fondo (z-index -1) queda sobre el color de la tarjeta y bajo su contenido. */
+.card {
+  position: relative;
+  isolation: isolate;
+}
+
+.card::before,
+.card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 300ms ease;
+}
+
+/* * Borde: el degradado recortado a un anillo de 1px con mask. */
+.card::before {
+  z-index: 1;
+  padding: 1px;
+  background: radial-gradient(
+    16rem circle at var(--spotlight-x, 50%) var(--spotlight-y, 50%),
+    var(--palette-accent),
+    transparent 70%
+  );
+  mask:
+    linear-gradient(black, black) content-box,
+    linear-gradient(black, black);
+  mask-composite: exclude;
+}
+
+/* * Fondo: un foco suave del mismo color, detrás del texto. */
+.card::after {
+  z-index: -1;
+  background: radial-gradient(
+    24rem circle at var(--spotlight-x, 50%) var(--spotlight-y, 50%),
+    color-mix(in srgb, var(--palette-accent) 16%, transparent),
+    transparent 70%
+  );
+}
+
+/* ! Solo con mouse: en táctil no hay cursor que seguir y el efecto no aporta. */
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .card:hover::before,
+  .card:hover::after {
+    opacity: 1;
+  }
+}

@@ -1,0 +1,58 @@
+import Link from "next/link";
+import type { NavItem } from "@/lib/navigation";
+import type { SocialLink } from "@/types/site";
+import { SocialLinks } from "@/components/ui/SocialLinks";
+import { Container } from "./Container";
+
+type Props = {
+  name: string;
+  tagline: string;
+  navigation: NavItem[];
+  social: SocialLink[];
+  contactLines: string[];
+  year: number;
+};
+
+export function Footer({ name, tagline, navigation, social, contactLines, year }: Props) {
+  return (
+    // En modo oscuro el primary (azul de botones) es muy llamativo para un bloque grande: usa surface.
+    <footer className="focus-on-dark bg-primary text-primary-foreground dark:border-t dark:border-border dark:bg-surface dark:text-foreground">
+      {/* Columnas solo desde lg: en tablet no caben bien y se apilan como en móvil.
+          La marca toma el espacio libre (flex-1) y las otras columnas miden lo que su contenido. */}
+      <Container className="flex flex-col gap-10 py-12 lg:flex-row lg:gap-24 xl:gap-32">
+        <div className="lg:flex-1">
+          <p className="text-lg font-bold">{name}</p>
+          <p className="mt-2 text-sm opacity-80">{tagline}</p>
+          <SocialLinks links={social} label="Síguenos" className="mt-6" />
+        </div>
+
+        <nav aria-label="Pie de página">
+          {/* -mt-3 compensa el py-3 de los enlaces (área táctil) para alinear el primero con las otras columnas. */}
+          <ul className="-mt-3 text-sm">
+            {navigation.map((item) => (
+              <li key={item.href}>
+                <Link href={item.href} className="inline-block py-3 opacity-80 transition hover:opacity-100">
+                  {item.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </nav>
+
+        {contactLines.length > 0 && (
+          <ul className="space-y-2 text-sm opacity-80">
+            {contactLines.map((line) => (
+              <li key={line}>{line}</li>
+            ))}
+          </ul>
+        )}
+      </Container>
+
+      <div className="border-t border-primary-foreground/15">
+        <Container className="py-6 text-xs opacity-70">
+          © {year} {name}. Todos los derechos reservados.
+        </Container>
+      </div>
+    </footer>
+  );
+}
